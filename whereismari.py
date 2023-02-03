@@ -68,6 +68,8 @@ def query_dataframe(df: pd.DataFrame, time: datetime.time, weekday: str) -> Opti
     query_result = selected_rows[weekday]
     processed_output = str(query_result.values[0])
     processed_output = processed_output.replace("\r", " ")
+    if processed_output:
+        return None
     return processed_output
 
 def display_location_message(processed_output: str, object_of_limerence: str):
