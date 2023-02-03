@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import _Time, datetime
 from typing import Optional, Tuple
 
 import pandas as pd
-import tabula
+from tabula.io import read_pdf
 
 
 class Colors():
@@ -14,7 +14,7 @@ class Colors():
     ENDC    = "\033[0m"
 
 
-def get_weekday_and_time() -> Tuple[str, datetime.time]:
+def get_weekday_and_time() -> Tuple[str, _Time]:
     current_datetime = datetime.now()
     weekday = get_weekday(current_datetime)
     current_time = current_datetime.time()
@@ -29,21 +29,21 @@ def get_weekday(current_datetime: datetime) -> str:
     return weekday
 
 def get_table_from_pdf(file_name: str) -> pd.DataFrame:
-    pdf_dataframes = tabula.read_pdf(file_name, pages="all")
+    pdf_dataframes = read_pdf(file_name, pages="all")
     schedule_df = list(pdf_dataframes)[0]
     return pd.DataFrame(schedule_df)
 
-def display_time_message(weekday: str, time: datetime.time):
-    time = str(time)[0:5]
+def display_time_message(weekday: str, time: _Time):
+    time_str = time.strftime("%H:%M")
     message = "\n\tDay of the week is "
     message += highlight(weekday, Colors.OKGREEN)
     message += ". Current time is "
-    message += highlight(time, Colors.OKCYAN)
+    message += highlight(time_str, Colors.OKCYAN)
     print(f"{message}.")
 
 def load_dataframe(pdf_name: str) -> pd.DataFrame:
     try:
-        df = pd.read_hdf('schedule.h5', 'df')
+        df = pd.DataFrame(pd.read_hdf('schedule.h5', 'df'))
     except FileNotFoundError:
         df = get_table_from_pdf(pdf_name)
         df = df.applymap(str)
@@ -64,13 +64,13 @@ def split_time_windows(df: pd.DataFrame):
 def convert_to_datetime(df: pd.DataFrame, column: str) -> pd.Series:
     return pd.to_datetime(df[column], format="%H:%M").dt.time
 
-def find_time_row(df: pd.DataFrame, time: datetime.time) -> Optional[pd.Series]:
+def find_time_row(df: pd.DataFrame, time: _Time) -> Optional[pd.DataFrame]:
     selected_rows = df.loc[(df["start_time"] <= time) & (df["end_time"] >= time)]
     if selected_rows.empty:
         return None
     return selected_rows
 
-def query_dataframe(df: pd.DataFrame, time: datetime.time, weekday: str) -> Optional[str]:
+def query_dataframe(df: pd.DataFrame, time: _Time, weekday: str) -> Optional[str]:
     selected_rows = find_time_row(df, time)
     if selected_rows is None:
         return selected_rows
