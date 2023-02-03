@@ -13,6 +13,7 @@ class Colors():
     FAIL    = "\033[91m"
     ENDC    = "\033[0m"
 
+
 def get_weekday_and_time() -> Tuple[str, datetime.time]:
     current_datetime = datetime.now()
     weekday = get_weekday(current_datetime)
@@ -40,8 +41,17 @@ def display_time_message(weekday: str, time: datetime.time):
     message += highlight(time, Colors.OKCYAN)
     print(f"{message}.")
 
+def load_dataframe(pdf_name: str) -> pd.DataFrame:
+    try:
+        df = pd.read_hdf('schedule.h5', 'df')
+    except FileNotFoundError:
+        df = get_table_from_pdf(pdf_name)
+        df = df.applymap(str)
+        df.to_hdf('schedule.h5', key='df', mode='w')
+    return df
+
 def load_and_process_dataframe(pdf_name: str) -> pd.DataFrame:
-    df = get_table_from_pdf(pdf_name)
+    df = load_dataframe(pdf_name)
     split_time_windows(df)
     df["start_time"] = convert_to_datetime(df, "start_time")
     df["end_time"] = convert_to_datetime(df, "end_time")
