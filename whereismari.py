@@ -73,7 +73,7 @@ def query_dataframe(df: pd.DataFrame, time: datetime.time, weekday: str) -> Opti
 def display_location_message(processed_output, object_of_limerence):
     if processed_output is None:
         message = highlight(object_of_limerence, Colors.FAIL)
-        message += highlight("not found.", Colors.FAIL)
+        message += highlight(" not found.", Colors.WARNING)
         print(f"\t{message}\n")
         exit()
     message = highlight(object_of_limerence, Colors.OKGREEN)
