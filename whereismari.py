@@ -75,7 +75,6 @@ def query_dataframe(df: pd.DataFrame, time: datetime, weekday: str) -> Optional[
     if selected_rows is None:
         return selected_rows
     query_result = selected_rows[weekday]
-    print(query_result)
     processed_output = str(query_result.values[0])
     processed_output = processed_output.replace("\r", " ")
     if processed_output == "nan":
