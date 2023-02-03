@@ -13,7 +13,6 @@ class Colors():
     FAIL    = "\033[91m"
     ENDC    = "\033[0m"
 
-
 def get_weekday_and_time() -> Tuple[str, datetime.time]:
     current_datetime = datetime.now()
     weekday = get_weekday(current_datetime)
@@ -72,7 +71,7 @@ def query_dataframe(df: pd.DataFrame, time: datetime.time, weekday: str) -> Opti
         return None
     return processed_output
 
-def display_location_message(processed_output: str, object_of_limerence: str):
+def display_location_message(processed_output: Optional[str], object_of_limerence: str):
     if processed_output is None:
         message = highlight(object_of_limerence, Colors.FAIL)
         message += highlight(" not found.", Colors.WARNING)
@@ -95,7 +94,6 @@ def main():
     
     display_time_message(weekday, current_time)
     display_location_message(location, object_of_limerence)
-
 
 if __name__ == "__main__":
     main()
