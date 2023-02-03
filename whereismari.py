@@ -1,4 +1,4 @@
-from datetime import _Time, datetime
+from datetime import datetime
 from typing import Optional, Tuple
 
 import pandas as pd
@@ -14,7 +14,7 @@ class Colors():
     ENDC    = "\033[0m"
 
 
-def get_weekday_and_time() -> Tuple[str, _Time]:
+def get_weekday_and_time() -> Tuple[str, datetime]:
     current_datetime = datetime.now()
     weekday = get_weekday(current_datetime)
     current_time = current_datetime.time()
@@ -33,7 +33,7 @@ def get_table_from_pdf(file_name: str) -> pd.DataFrame:
     schedule_df = list(pdf_dataframes)[0]
     return pd.DataFrame(schedule_df)
 
-def display_time_message(weekday: str, time: _Time):
+def display_time_message(weekday: str, time: datetime):
     time_str = time.strftime("%H:%M")
     message = "\n\tDay of the week is "
     message += highlight(weekday, Colors.OKGREEN)
@@ -64,13 +64,13 @@ def split_time_windows(df: pd.DataFrame):
 def convert_to_datetime(df: pd.DataFrame, column: str) -> pd.Series:
     return pd.to_datetime(df[column], format="%H:%M").dt.time
 
-def find_time_row(df: pd.DataFrame, time: _Time) -> Optional[pd.DataFrame]:
+def find_time_row(df: pd.DataFrame, time: datetime) -> Optional[pd.DataFrame]:
     selected_rows = df.loc[(df["start_time"] <= time) & (df["end_time"] >= time)]
     if selected_rows.empty:
         return None
     return selected_rows
 
-def query_dataframe(df: pd.DataFrame, time: _Time, weekday: str) -> Optional[str]:
+def query_dataframe(df: pd.DataFrame, time: datetime, weekday: str) -> Optional[str]:
     selected_rows = find_time_row(df, time)
     if selected_rows is None:
         return selected_rows
